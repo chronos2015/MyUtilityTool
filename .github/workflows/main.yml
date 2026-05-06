@@ -21,3 +21,12 @@ jobs:
       
     - name: Test
       run: dotnet test --configuration Release --no-build --verbosity normal
+      
+    - name: Commit Coverage Report
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add coveragereport/summary.json
+        git diff-index --quiet HEAD || git commit -m "chore: update code coverage summary [skip ci]"
+        git push
